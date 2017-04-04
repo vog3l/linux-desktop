@@ -1,0 +1,82 @@
+#!/usr/bin/env bash
+
+#- brightness v0.1
+#- 
+#- Copyright (c) 2017
+#- Author: Arthur Vogel
+#- 
+#- Note:
+#- This script adjusts keyboard/monitor brightness.
+#- Tested on MacBookPro 11,x
+#-  
+
+## Usage: brightness [OPTION]
+## 
+##      -t      keyboard|monitor
+##      -p      <integer>
+##
+##      -h      Show help options.
+##      -v      Print version info.
+## 
+## Example: brightness -t keyboard -p +2
+## 	    brightness -t monitor -p -2
+##  
+
+help=$(grep "^## " "${BASH_SOURCE[0]}" | cut -c 4-)
+version=$(grep "^#- "  "${BASH_SOURCE[0]}" | cut -c 4-)
+ 
+
+# set base dir and handler for backlight class
+set_vars() {
+  case "$OPTARG" in 
+    keyboard)
+      basedir="/sys/class/leds/"
+      handler=$basedir"smc::kbd_backlight/"
+      ;;
+    monitor)
+      basedir="/sys/class/backlight/"
+      handler=$basedir$"intel_backlight/"
+      ;;
+  esac
+}
+
+adjust_brightness() {
+  # get current brightness
+  old_brightness=$(cat $handler"brightness")
+
+  # get max brightness
+  max_brightness=$(cat $handler"max_brightness")
+
+  # get current brightness %
+  old_brightness_p=$(( 100 * $old_brightness / $max_brightness ))
+
+  # calculate new brightness % 
+  new_brightness_p=$(($old_brightness_p $percentage))
+
+  # calculate new brightness value
+  new_brightness=$(( $max_brightness * $new_brightness_p / 100 ))
+
+  # set the new brightness value
+  echo $new_brightness > $handler"brightness"
+  exit 0
+}
+
+while getopts ":hvt:p:" opt; do
+  case "$opt" in 
+    h)
+      echo "$version"
+      ;;
+    v)
+      echo "$help"
+      ;;
+    t)
+      eval set_vars
+      ;;
+    p)
+      percentage="$OPTARG"
+      eval adjust_brightness
+      ;;
+  esac
+done
+
+
