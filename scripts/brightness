@@ -61,7 +61,7 @@ adjust_brightness() {
   exit 0
 }
 
-while getopts ":hvt:p:" opt; do
+while getopts ":hvt:o:" opt; do
   case "$opt" in 
     h)
       echo "$version"
