@@ -8,4 +8,7 @@ install:
 	sudo cp $(SCRIPT_DIR)/brightness $(SCRIPT_PATH)/
 	sudo chmod 755 $(SCRIPT_PATH)/*
 
+	cp $(CONFIG_DIR)/xinitrc ~/.xinitrc
+	cp $(CONFIG_DIR)/Xresources ~/.Xresources
+
 	cp $(CONFIG_DIR)/i3-config ~/.config/i3/config

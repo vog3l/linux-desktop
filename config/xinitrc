@@ -1,0 +1,10 @@
+# ~/.xinitrc
+#
+# Author: Arthur Vogel
+# Updated: 2017-04-04
+# 
+# Note:
+#
+
+exec i3
+
