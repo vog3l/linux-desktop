@@ -12,3 +12,6 @@ install:
 	cp $(CONFIG_DIR)/Xresources ~/.Xresources
 
 	cp $(CONFIG_DIR)/i3-config ~/.config/i3/config
+
+	sudo cp $(CONFIG_DIR)/i3status.conf /etc/
+	sudo cp $(CONFIG_DIR)/termite-config /etc/xdg/termite/config
