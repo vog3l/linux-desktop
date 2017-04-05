@@ -181,7 +181,7 @@ set $WS1 ""
 set $WS2 ""
 set $WS3 ""
 set $WS4 ""
-set $WS0 ""
+set $WS0 ""
 
 # switch to workspace
 bindsym $mod+1 workspace $WS1
@@ -256,7 +256,7 @@ for_window [window_role="pop-up"] floating enable
 # =============================================================================
 
 # HIDPI Settings
-exec --no-startup-id xrandr --dpi 130
+exec --no-startup-id xrandr --dpi 140
 
 # start compton against tearing effects
 exec --no-startup-id compton -b
