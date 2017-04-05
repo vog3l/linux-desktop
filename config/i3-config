@@ -249,14 +249,18 @@ for_window [class="keepassxc"] floating enable
 # browser pop-ups
 for_window [window_role="pop-up"] floating enable
 
-
+# Default Applikations
+exec --no-startup-id i3-msg "workspace $WS1; exec /usr/bin/termite"
+exec --no-startup-id i3-msg "workspace $WS2; exec /usr/bin/local/chrome"
+exec --no-startup-id i3-msg "workspace $WS3; exec /usr/bin/atom"
+exec --no-startup-id i3-msg "workspace $WS0; exec /usr/bin/keepassxc"
 
 # =============================================================================
-# Initial Setup
+# Background Applications / Settings
 # =============================================================================
 
 # HIDPI Settings
-exec --no-startup-id xrandr --dpi 140
+exec --no-startup-id xrandr --dpi 133
 
 # start compton against tearing effects
 exec --no-startup-id compton -b
@@ -266,5 +270,5 @@ exec --no-startup-id feh --bg-scale ~/Downloads/dark-background-wallpapers-9.jpg
 #exec --no-startup-id xsetroot -solid "#002b36"
 
 # enable multitouch gestures
-exec --no-starup-id libinput-gestures-setup start
+exec --no-startup-id libinput-gestures-setup start
 
