@@ -7,12 +7,11 @@
 #- Updated: 2017-04-07
 #- 
 #- Note:
-#- This script goes recursively through the source folder, 
-#- syncs everything to the destination folder
-#- and encrypts all files with PGP for the recipient.
+#- This script encrypts every file found in the source folder (recursively)
+#- to the destination folder. The directory hierarchy is preserved.
 #- 
-#- PGP encrypted files (destination) are never deleted.
-#- If the source file is newer the latest crypt file a new crypt file is created.
+#- Encrypted files at the destination will never be deleted. 
+#- If a synced source file is modified, a new encrypted file will be added.
 #- 
 
 ## 
@@ -31,6 +30,7 @@
 
 help=$(grep "^## " "${BASH_SOURCE[0]}" | cut -c 4-)
 version=$(grep "^#- "  "${BASH_SOURCE[0]}" | cut -c 4-)
+
 
 #---------------------------------------------------------------------------------------
 # Colored output
@@ -56,6 +56,7 @@ echo_error() {
   echo -e "${RED}$1${NC}" 1>&2
   exit 1
 }
+
 
 #---------------------------------------------------------------------------------------
 # Check if all variables are set
