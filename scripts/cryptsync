@@ -10,7 +10,10 @@
 #- This script goes recursively through the source folder, 
 #- syncs everything to the destination folder
 #- and encrypts all files with PGP for the recipient.
-#-  
+#- 
+#- PGP encrypted files (destination) are never deleted.
+#- If the source file is newer the latest crypt file a new crypt file is created.
+#- 
 
 ## 
 ## Usage: cryptsync [OPTION]
@@ -55,11 +58,11 @@ echo_error() {
 }
 
 #---------------------------------------------------------------------------------------
-# Check if all needed variables are set
+# Check if all variables are set
 #---------------------------------------------------------------------------------------
 check_vars() {
   if [[ ! -v src || ! -v dst || ! -v to ]]; then
-    echo_error "See 'cryptsync -h' for an usage exmaple." 
+    echo_error "See 'cryptsync -h' for an usage example." 
     exit 1
   fi
 }
@@ -119,7 +122,7 @@ sync() {
 	  # get dates
           src_date=`date -r "$src_file" +%Y-%m-%d\ %H:%M:%S`
           dst_date=`date -r "$latest" +%Y-%m-%d\ %H:%M:%S`
-          # if the source file is newer the latest destination file
+          # if the source file is newer the latest crypt file create a new version
           if [[ `date --date="$src_date" +%s` -ge `date --date="$dst_date" +%s` ]]; then
             encrypt
             echo_success "** $crypt_file"
