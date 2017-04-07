@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+
+#- 
+#- cryptsync
+#- 
+#- Author: vog3l <mail@vog3l.de>
+#- Updated: 2017-04-07
+#- 
+#- Note:
+#- This script goes recursively through the source folder, 
+#- syncs everything to the destination folder
+#- and encrypts all files with PGP for the recipient.
+#-  
+
+## 
+## Usage: cryptsync [OPTION]
+## 
+##      -s      <source>
+##      -d      <destination>
+##      -r      <recipient>
+## 
+##      -m      No output except error.
+##      -h      Show help options.
+##      -v      Print version info.
+## 
+## Example: cryptsync -s /var/keys -d /home/alice/.keys -r alice@gmail.com
+##  
+
+help=$(grep "^## " "${BASH_SOURCE[0]}" | cut -c 4-)
+version=$(grep "^#- "  "${BASH_SOURCE[0]}" | cut -c 4-)
+
+#---------------------------------------------------------------------------------------
+# Colored output
+#---------------------------------------------------------------------------------------
+RED='\033[5;31m'
+GREEN='\033[5;32m'
+GRAY='\033[2;39m'
+NC='\033[0m' # No Color
+
+echo_default() {
+  if [[ ! -v mute ]]; then
+    echo -e "${GRAY}$1${NC}" 1>&2
+  fi
+}
+
+echo_success() {
+  if [[ ! -v mute ]]; then
+    echo -e "${GREEN}$1${NC}" 1>&2
+  fi
+}
+
+echo_error() {
+  echo -e "${RED}$1${NC}" 1>&2
+  exit 1
+}
+
+#---------------------------------------------------------------------------------------
+# Check if all needed variables are set
+#---------------------------------------------------------------------------------------
+check_vars() {
+  if [[ ! -v src || ! -v dst || ! -v to ]]; then
+    echo_error "See 'cryptsync -h' for an usage exmaple." 
+    exit 1
+  fi
+}
+
+
+#---------------------------------------------------------------------------------------
+# PGP encryption
+#---------------------------------------------------------------------------------------
+encrypt() {
+  if [[ -v src_file && -v crypt_file ]]; then
+    if gpg --output "$crypt_file" --encrypt --recipient $to "$src_file" 2>/dev/null; then
+      chmod 0600 "$crypt_file"
+    else
+      echo_error "No public key for recipient '$to' found." 
+      exit 1
+    fi
+  else
+    echo_error "internal error (src_file/crypt_file vars not set)" 
+  fi
+}
+
+
+#---------------------------------------------------------------------------------------
+# Sync
+#---------------------------------------------------------------------------------------
+sync() {
+
+  if [[ -d $src ]]; then 
+
+    # find all files in source destination
+    for path in `find $src* 2>/dev/null`; do
+      # substitute path
+
+      file="${path/$src/}"
+
+      if [[ -d "$src$file" ]]; then
+        # create destination directory if it doesn't exist
+        if [[ ! -d "$dst$file"  && "$file" != "/lost+found" ]]; then
+          mkdir -p "$dst$file"
+          chmod 0700 "$dst$file"
+          echo_success "++ $dst$file"
+        fi
+
+      elif [[ -f "$src$file" ]]; then
+	# set variables
+	uuid=`uuidgen`
+        src_file=$path
+        crypt_file="${path/$src/$dst}-${uuid,,}.gpg"
+
+        # create destination file if it doesn't exist
+        if ! ls -t $dst$file*.gpg &> /dev/null; then 
+          encrypt
+          echo_success "++ $crypt_file"
+        else
+	  # get latest file
+	  latest=`ls -t $dst$file*.gpg | head -n 1`
+	  # get dates
+          src_date=`date -r "$src_file" +%Y-%m-%d\ %H:%M:%S`
+          dst_date=`date -r "$latest" +%Y-%m-%d\ %H:%M:%S`
+          # if the source file is newer the latest destination file
+          if [[ `date --date="$src_date" +%s` -ge `date --date="$dst_date" +%s` ]]; then
+            encrypt
+            echo_success "** $crypt_file"
+          fi
+        fi
+
+      else
+        echo_default "unknown file '$file'"
+      fi 
+    done
+
+    echo_default "[ ++: added, **: updated ]"
+    exit 0
+
+  else
+    echo_error "Source directory '$src' doesn't exist."
+    exit 1
+  fi
+}
+
+
+#---------------------------------------------------------------------------------------
+# Getopt
+#---------------------------------------------------------------------------------------
+while getopts ":hvms:d:r:" opt; do
+  case "$opt" in 
+    h)
+      echo "$help"
+      exit 0
+      ;;
+    v)
+      echo "$version"
+      exit 0
+      ;;
+    s)
+      src="${OPTARG%/}"
+      ;;
+    d)
+      dst="${OPTARG%/}"
+      ;;
+    r)
+      to="$OPTARG"
+      ;;
+    m)
+      mute=""
+      ;;
+  esac
+done
+
+
+#---------------------------------------------------------------------------------------
+# Start
+#---------------------------------------------------------------------------------------
+check_vars
+sync

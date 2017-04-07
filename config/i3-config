@@ -1,7 +1,7 @@
 # ~/.config/i3/config
 #
-# Author: Arthur Vogel
-# Updated: 2017-04-04
+# Author: vog3l
+# Updated: 2017-04-07
 # 
 # Note:
 # Please see http://i3wm.org/docs/userguide.html for a complete reference!
@@ -127,9 +127,6 @@ exec --no-startup-id xautolock -time 10 -locker i3lock-fancy
 # take screenshot
 bindsym $mod+Shift+s exec scrot
 
-# umount boot usb stick
-bindsym $mod+Shift+u exec sudo umount -R /boot
-
 
 # kill focused window
 bindsym $mod+q kill
@@ -196,16 +193,16 @@ bindsym $mod+9 workspace 9
 bindsym $mod+0 workspace $WS0
 
 # move focused container to workspace
-bindsym $mod+Shift+1 move container to workspace $WS1
-bindsym $mod+Shift+2 move container to workspace $WS2
-bindsym $mod+Shift+3 move container to workspace $WS3
-bindsym $mod+Shift+4 move container to workspace $WS4
-bindsym $mod+Shift+5 move container to workspace 5
-bindsym $mod+Shift+6 move container to workspace 6
-bindsym $mod+Shift+7 move container to workspace 7
-bindsym $mod+Shift+8 move container to workspace 8
-bindsym $mod+Shift+9 move container to workspace 9
-bindsym $mod+Shift+0 move container to workspace $WS0
+bindsym $mod+Shift+1 move container to workspace $WS1; workspace $WS1
+bindsym $mod+Shift+2 move container to workspace $WS2; workspace $WS2
+bindsym $mod+Shift+3 move container to workspace $WS3; workspace $WS3
+bindsym $mod+Shift+4 move container to workspace $WS4; workspace $WS4
+bindsym $mod+Shift+5 move container to workspace 5; workspace 5
+bindsym $mod+Shift+6 move container to workspace 6; workspace 6
+bindsym $mod+Shift+7 move container to workspace 7; workspace 7
+bindsym $mod+Shift+8 move container to workspace 8; workspace 8
+bindsym $mod+Shift+9 move container to workspace 9; workspace 9
+bindsym $mod+Shift+0 move container to workspace $WS0; workspace $WS0
 
 
 # resize window (you can also use the mouse for that)

@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-#- brightness v0.1
 #- 
-#- Author: Arthur Vogel
+#- brightness
+#- 
+#- Author: vog3l <mail@vog3l.de>
 #- Updated: 2017-04-05
 #- 
 #- Note:
@@ -10,6 +11,7 @@
 #- Tested on MacBook Pro 11,x
 #-  
 
+## 
 ## Usage: brightness [OPTION]
 ## 
 ##      -t      keyboard|monitor
